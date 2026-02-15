@@ -425,10 +425,6 @@
       noBtn.style.display = "none";
       messageEl.textContent = "Correct answer ✅";
 
-      const music = document.getElementById("bgMusic");
-      if (music){
-        try { music.currentTime = 0; await music.play(); } catch(e) {}
-      }
     });
 
     // Hearts
