@@ -1,22 +1,24 @@
-# Valentine GitHub Pages Site 💖
+# Valentine GitHub Pages Site 💖 (v4 - BIG random photos)
 
-## Add your 4 pics
-Put your photos in `assets/` and name them:
-- pic1.jpg
-- pic2.jpg
-- pic3.jpg
-- pic4.jpg
+## Add your photos
+Put your pics in `assets/` and update the list in `index.html`:
 
-(Or change filenames in `index.html` under `GALLERY_IMAGES`.)
+```js
+const PHOTOS = [
+  "assets/pic1.jpg",
+  "assets/pic2.jpg",
+  "assets/pic3.jpg",
+  "assets/pic4.jpg"
+];
+```
 
-## Add the music
-For copyright reasons, this repo does NOT include the song file.
+GitHub Pages is **case-sensitive**. Filenames must match exactly.
 
-If you have the right to use the song, add an MP3 file here:
+## Add music
+Put your mp3 here (if you have rights):
 - `assets/opriya.mp3`
 
-(Or change the `<source src="...">` in `index.html`.)
-
-## Deploy on GitHub Pages
-- Put these files in a repo
-- Settings → Pages → Deploy from branch → `main` /root
+## What changed vs v3
+- Photos are now **big polaroids** randomly placed around the screen.
+- They avoid the center card area.
+- “No” button is confined to the button area (won’t cover photos).

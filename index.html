@@ -5,234 +5,183 @@
   <title>Will You Be My Valentine? ❤️</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <style>
-    :root {
-      --pink: #ff4d6d;
-      --bg1: #ff9a9e;
-      --bg2: #fad0c4;
-    }
+    :root { --pink:#ff4d6d; --bg1:#ff9a9e; --bg2:#fad0c4; }
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
+    body{
+      margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
+      height:100vh;
+      overflow:hidden;
     }
-    .card {
+
+    /* Floating hearts */
+    .hearts{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+    .heart{
+      position:absolute;
+      color: rgba(255, 0, 100, 0.55);
+      animation: float 6s linear infinite;
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.10));
+    }
+    @keyframes float{
+      from{ transform: translateY(105vh) scale(0.85) rotate(0deg); opacity:1; }
+      to{ transform: translateY(-15vh) scale(1.25) rotate(20deg); opacity:0; }
+    }
+
+    /* Big random photo layer (behind card) */
+    .photo-layer{
+      position:fixed;
+      inset:0;
+      pointer-events:none; /* so clicks go to buttons */
+      z-index: 1;
+    }
+    .polaroid{
+      position:absolute;
+      width: min(44vw, 260px);
+      max-width: 280px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 18px;
+      padding: 10px 10px 14px;
+      box-shadow: 0 18px 45px rgba(0,0,0,0.22);
+      transform: translate(-50%, -50%) rotate(var(--rot));
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(0,0,0,0.06);
+      opacity: 0.98;
+    }
+    .polaroid img{
+      width:100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      border-radius: 14px;
+      display:block;
+      background: rgba(255,255,255,0.65);
+    }
+    .polaroid .cap{
+      margin-top: 10px;
+      font-weight: 800;
+      color: #333;
+      font-size: 0.92rem;
+      letter-spacing: -0.01em;
+      text-align:center;
+      opacity: 0.9;
+    }
+
+    /* Main center card */
+    .wrap{
+      position: fixed;
+      inset: 0;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index: 5;
+      padding: 16px;
+      pointer-events:none; /* let inner card manage */
+    }
+    .card{
+      pointer-events:auto;
       background: rgba(255,255,255,0.92);
       border-radius: 28px;
       padding: 22px 20px 18px;
-      text-align: center;
+      text-align:center;
       box-shadow: 0 18px 45px rgba(0,0,0,0.22);
-      max-width: 460px;
-      width: min(92vw, 460px);
+      width: min(92vw, 520px);
       backdrop-filter: blur(6px);
       position: relative;
     }
-    h1 {
-      margin: 6px 0 10px;
-      font-size: clamp(1.7rem, 4vw, 2.2rem);
-      letter-spacing: -0.02em;
-    }
-    .subtitle {
-      margin: 0 0 14px;
-      color: #444;
-      font-size: 1.02rem;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 999px;
-      font-size: 0.95rem;
-      color: #333;
+    h1{ margin: 6px 0 10px; font-size: clamp(1.7rem, 4vw, 2.25rem); letter-spacing:-0.02em; }
+    .subtitle{ margin:0 0 14px; color:#444; font-size:1.02rem; }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 12px; background:#fff;
+      border:1px solid rgba(0,0,0,0.06);
+      border-radius:999px; font-size:0.95rem; color:#333;
       box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      margin-bottom: 10px;
+      margin-bottom:10px;
     }
-    .badge b { color: var(--pink); }
-    .buttons {
+    .badge b{ color: var(--pink); }
+
+    /* Buttons playground (No stays here, never over photos) */
+    .buttons{
       margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      gap: 18px;
+      display:flex; justify-content:center; gap:18px;
       position: relative;
-      height: 86px;
-      user-select: none;
+      height: 96px;
+      user-select:none;
       touch-action: manipulation;
+      overflow: hidden;
+      border-radius: 18px;
     }
-    button {
+    button{
       padding: 12px 26px;
       font-size: 1.08rem;
-      border: none;
-      border-radius: 999px;
-      cursor: pointer;
+      border:none; border-radius:999px;
+      cursor:pointer;
       transition: transform 0.14s ease, box-shadow 0.14s ease;
       box-shadow: 0 10px 22px rgba(0,0,0,0.14);
-      font-weight: 700;
+      font-weight: 800;
+      will-change: transform, left, top;
     }
-    button:active { transform: scale(0.98); }
-    #yesBtn {
-      background: var(--pink);
-      color: #fff;
-    }
-    #yesBtn:hover { transform: translateY(-1px) scale(1.01); }
-    #noBtn {
-      background: #e8e8e8;
-      color: #333;
-      position: absolute;
-      left: 62%;
-      top: 8px;
-    }
-    .message {
-      margin-top: 12px;
-      font-size: 1rem;
-      color: #333;
-      min-height: 1.6em;
-      font-weight: 600;
-    }
-    .gallery {
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-    .gallery img {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 14px;
-      border: 2px solid rgba(255,77,109,0.7);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.10);
-      cursor: pointer;
-      transition: transform 0.15s ease;
-      background: rgba(255,255,255,0.6);
-    }
-    .gallery img:hover { transform: scale(1.03); }
-
-    .hint {
-      margin-top: 10px;
-      color: #555;
-      font-size: 0.95rem;
+    button:active{ transform: scale(0.98); }
+    #yesBtn{ background: var(--pink); color:#fff; }
+    #yesBtn:hover{ transform: translateY(-1px) scale(1.01); }
+    #noBtn{
+      background: #e8e8e8; color:#333;
+      position:absolute;
+      left: 65%;
+      top: 10px;
     }
 
-    /* floating hearts */
-    .hearts {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
-    }
-    .heart {
-      position: absolute;
-      color: rgba(255, 0, 100, 0.55);
-      animation: float 6s linear infinite;
-      will-change: transform, opacity;
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,0.10));
-    }
-    @keyframes float {
-      from { transform: translateY(105vh) scale(0.85) rotate(0deg); opacity: 1; }
-      to { transform: translateY(-15vh) scale(1.25) rotate(20deg); opacity: 0; }
-    }
+    .message{ margin-top: 12px; font-size: 1rem; color:#333; min-height: 1.6em; font-weight: 800; }
+    .hint{ margin-top: 10px; color:#555; font-size: 0.95rem; }
 
-    /* confetti canvas sits above everything */
-    #confettiCanvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 50;
-    }
+    /* Confetti */
+    #confettiCanvas{ position:fixed; inset:0; pointer-events:none; z-index:50; }
 
-    /* success overlay */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
+    /* Success overlay */
+    .overlay{
+      position:fixed; inset:0;
+      display:none; justify-content:center; align-items:center;
       background: linear-gradient(135deg, var(--bg1), var(--bg2));
-      z-index: 40;
-      padding: 20px;
-      text-align: center;
+      z-index:40; padding:20px; text-align:center;
     }
-    .overlay .inner {
+    .overlay .inner{
       background: rgba(255,255,255,0.92);
       border-radius: 28px;
       padding: 26px 22px;
-      max-width: 520px;
-      width: min(92vw, 520px);
+      width: min(92vw, 560px);
       box-shadow: 0 18px 45px rgba(0,0,0,0.22);
     }
-    .overlay h2 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 5vw, 3rem);
-      letter-spacing: -0.02em;
-    }
-    .overlay p {
-      margin: 8px 0;
-      font-size: 1.15rem;
-      color: #333;
-      font-weight: 600;
-    }
-    .tiny {
-      margin-top: 12px;
-      font-size: 0.92rem;
-      color: #555;
-      font-weight: 500;
-    }
-    .audioRow {
-      margin-top: 14px;
-      display: flex;
-      justify-content: center;
-    }
-    audio {
-      width: min(420px, 86vw);
-    }
-    /* modal for larger pic */
-    .modal {
-      position: fixed;
-      inset: 0;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      background: rgba(0,0,0,0.6);
-      z-index: 60;
-      padding: 18px;
-    }
-    .modal img {
-      max-width: min(92vw, 720px);
-      max-height: min(86vh, 720px);
-      border-radius: 18px;
-      border: 2px solid rgba(255,255,255,0.55);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.45);
-      background: #fff;
+    .overlay h2{ margin:0 0 10px; font-size: clamp(2rem, 5vw, 3rem); letter-spacing:-0.02em; }
+    .overlay p{ margin: 8px 0; font-size: 1.15rem; color:#333; font-weight: 800; }
+    .tiny{ margin-top: 12px; font-size: 0.92rem; color:#555; font-weight: 600; }
+    .audioRow{ margin-top: 14px; display:flex; justify-content:center; }
+    audio{ width: min(420px, 86vw); }
+
+    /* Mobile: reduce polaroid count and size a bit */
+    @media (max-width: 420px){
+      .polaroid{ width: min(60vw, 240px); }
     }
   </style>
 </head>
 <body>
   <canvas id="confettiCanvas"></canvas>
   <div class="hearts" id="hearts"></div>
+  <div class="photo-layer" id="photoLayer"></div>
 
-  <div class="card" id="card">
-    <div class="badge">Status: <b>extremely</b> in love ✅</div>
-    <h1>Will you be my Valentine? 💖</h1>
-    <p class="subtitle">Warning: the “No” button has commitment issues.</p>
+  <div class="wrap">
+    <div class="card" id="card">
+      <div class="badge">Status: <b>extremely</b> in love ✅</div>
+      <h1>Will you be my Valentine? 💖</h1>
+      <p class="subtitle">Warning: the “No” button has commitment issues.</p>
 
-    <div class="buttons">
-      <button id="yesBtn">Yes 💘</button>
-      <button id="noBtn">No 🙃</button>
+      <div class="buttons" id="buttonsPlayground">
+        <button id="yesBtn">Yes 💘</button>
+        <button id="noBtn">No 🙃</button>
+      </div>
+
+      <div class="message" id="message"></div>
+      <div class="hint">Pro tip: the “No” button is shy. 😌</div>
     </div>
-
-    <div class="message" id="message"></div>
-
-    <div class="gallery" id="gallery"></div>
-    <div class="hint">Tap a photo to zoom. (Also… just press “Yes”. 😌)</div>
   </div>
 
   <div class="overlay" id="overlay">
@@ -242,35 +191,36 @@
       <p>Happy Valentine’s Day, my love 💕</p>
 
       <div class="audioRow">
-        <audio id="bgMusic" controls autoplay loop>
-          <!-- IMPORTANT:
-               For copyright reasons, this project does NOT include the song file.
-               Add your own audio file at: assets/opriya.mp3
-               (or change the src below to your filename) -->
+        <audio id="bgMusic" controls loop preload="auto" playsinline>
           <source src="assets/opriya.mp3" type="audio/mpeg" />
-          Your browser does not support the audio element.
         </audio>
       </div>
 
       <div class="tiny">
-        If music doesn't autoplay, press play once (browser rules).
+        Music starts right after clicking YES (browser-friendly).
       </div>
     </div>
   </div>
 
-  <div class="modal" id="modal">
-    <img id="modalImg" alt="Zoomed memory" />
-  </div>
-
   <script>
-    // ====== CONFIG: Put your 4 pics in assets/ and name them here ======
-    // Example names you can use:
-    // assets/pic1.jpg, assets/pic2.jpg, assets/pic3.jpg, assets/pic4.jpg
-    const GALLERY_IMAGES = [
+    // ====== PUT YOUR PHOTOS IN assets/ AND LIST THEM HERE ======
+    // You can use 4+ photos. Bigger "polaroids" will be placed randomly.
+    // Example:
+    // const PHOTOS = ["assets/pic1.jpg","assets/pic2.jpg","assets/pic3.jpg","assets/pic4.jpg"];
+    const PHOTOS = [
       "assets/pic1.jpg",
       "assets/pic2.jpg",
       "assets/pic3.jpg",
       "assets/pic4.jpg"
+    ];
+
+    const CAPTIONS = [
+      "Certified cutie 😌",
+      "My favorite human 💘",
+      "Heart thief 🚨",
+      "Pretty + dangerous 😤",
+      "Wife = wow 😮",
+      "Main character energy ✨"
     ];
 
     const messages = [
@@ -282,184 +232,214 @@
       "Ok but… YES looks really good on you 😇"
     ];
 
+    const photoLayer = document.getElementById("photoLayer");
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
     const messageEl = document.getElementById("message");
-    const galleryEl = document.getElementById("gallery");
     const overlay = document.getElementById("overlay");
-    const modal = document.getElementById("modal");
-    const modalImg = document.getElementById("modalImg");
+    const playground = document.getElementById("buttonsPlayground");
 
     let msgIndex = 0;
 
-    function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+    function rand(min, max){ return Math.random() * (max - min) + min; }
+    function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
-    function moveNoButton() {
-      const card = document.getElementById("card");
-      const rect = card.getBoundingClientRect();
+    function placePolaroids(){
+      photoLayer.innerHTML = "";
+      if (!PHOTOS.length) return;
 
-      const maxX = rect.width - noBtn.offsetWidth - 10;
-      const maxY = rect.height - noBtn.offsetHeight - 10;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
 
-      const x = Math.random() * clamp(maxX, 40, maxX);
-      const y = (Math.random() * clamp(maxY, 60, maxY)) * 0.55 + 10;
+      // Use fewer photos on small screens to avoid clutter
+      const count = w < 500 ? Math.min(2, PHOTOS.length) : Math.min(4, PHOTOS.length);
 
-      noBtn.style.left = x + "px";
-      noBtn.style.top = y + "px";
+      // Define "safe zone" around center card so photos don't cover it
+      const safeW = Math.min(600, w * 0.72);
+      const safeH = Math.min(520, h * 0.62);
+      const safeLeft = (w - safeW) / 2;
+      const safeTop  = (h - safeH) / 2;
 
-      messageEl.textContent = messages[msgIndex % messages.length];
-      msgIndex++;
-      // tiny shake for drama
-      noBtn.style.transform = "translateY(-1px)";
-      setTimeout(() => noBtn.style.transform = "translateY(0px)", 120);
+      function isInSafeZone(x, y){
+        return x > safeLeft && x < safeLeft + safeW && y > safeTop && y < safeTop + safeH;
+      }
+
+      const used = new Set();
+      let tries = 0;
+
+      while (used.size < count && tries < 200){
+        tries++;
+        const idx = Math.floor(Math.random() * PHOTOS.length);
+        if (used.has(idx)) continue;
+
+        // random center point
+        const x = rand(10, w - 10);
+        const y = rand(10, h - 10);
+
+        if (isInSafeZone(x, y)) continue;
+
+        used.add(idx);
+
+        const pol = document.createElement("div");
+        pol.className = "polaroid";
+        pol.style.left = x + "px";
+        pol.style.top = y + "px";
+        pol.style.setProperty("--rot", rand(-10, 10) + "deg");
+
+        const img = document.createElement("img");
+        img.src = PHOTOS[idx];
+        img.alt = "Photo";
+        img.loading = "eager";
+        img.addEventListener("error", () => {
+          img.style.objectFit = "contain";
+          img.style.padding = "10px";
+          img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+            `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='500'>
+              <rect width='100%' height='100%' fill='white'/>
+              <text x='50%' y='45%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='22' fill='#ff4d6d'>Image not found</text>
+              <text x='50%' y='55%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='14' fill='#333'>${PHOTOS[idx]}</text>
+            </svg>`
+          );
+        });
+
+        const cap = document.createElement("div");
+        cap.className = "cap";
+        cap.textContent = pick(CAPTIONS);
+
+        pol.appendChild(img);
+        pol.appendChild(cap);
+        photoLayer.appendChild(pol);
+      }
     }
 
-    // Works on desktop + mobile
+    function moveNoButton(){
+      const rect = playground.getBoundingClientRect();
+      const maxX = rect.width - noBtn.offsetWidth - 10;
+      const maxY = rect.height - noBtn.offsetHeight - 10;
+      noBtn.style.left = (Math.random() * Math.max(10, maxX)) + "px";
+      noBtn.style.top  = (Math.random() * Math.max(10, maxY)) + "px";
+      messageEl.textContent = messages[msgIndex % messages.length];
+      msgIndex++;
+    }
+
     noBtn.addEventListener("mouseenter", moveNoButton);
     noBtn.addEventListener("mouseover", moveNoButton);
     noBtn.addEventListener("click", (e) => { e.preventDefault(); moveNoButton(); });
-    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, { passive: false });
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); }, { passive:false });
 
-    yesBtn.addEventListener("click", () => {
-      overlay.style.display = "flex";
-      startConfetti();
-      // If browser blocks autoplay, user can press play in controls
-      const music = document.getElementById("bgMusic");
-      if (music) music.play().catch(() => {});
-      // remove no-button stress
-      noBtn.style.display = "none";
-      messageEl.textContent = "Correct answer ✅";
-    });
-
-    // Gallery
-    GALLERY_IMAGES.forEach((src) => {
-      const img = document.createElement("img");
-      img.src = src;
-      img.alt = "Her pic";
-      img.loading = "lazy";
-      img.addEventListener("click", () => {
-        modalImg.src = src;
-        modal.style.display = "flex";
-      });
-      galleryEl.appendChild(img);
-    });
-    modal.addEventListener("click", () => {
-      modal.style.display = "none";
-      modalImg.src = "";
-    });
-
-    // Floating hearts
-    const heartsContainer = document.getElementById("hearts");
-    const heartGlyphs = ["❤️","💗","💖","💘","💝","💞"];
-    function createHeart() {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
-      heart.style.left = Math.random() * 100 + "vw";
-      heart.style.fontSize = (14 + Math.random() * 26) + "px";
-      heart.style.animationDuration = (4 + Math.random() * 4) + "s";
-      heartsContainer.appendChild(heart);
-      setTimeout(() => heart.remove(), 8500);
-    }
-    setInterval(createHeart, 520);
-
-    // ===== Confetti (lightweight canvas) =====
+    // Confetti (same lightweight canvas)
     const canvas = document.getElementById("confettiCanvas");
     const ctx = canvas.getContext("2d");
     let confetti = [];
-    let confettiRunning = false;
+    let running = false;
 
-    function resize() {
-      canvas.width = window.innerWidth * devicePixelRatio;
-      canvas.height = window.innerHeight * devicePixelRatio;
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    function resize(){
+      const dpr = devicePixelRatio || 1;
+      canvas.width = innerWidth * dpr;
+      canvas.height = innerHeight * dpr;
+      ctx.setTransform(dpr,0,0,dpr,0,0);
     }
-    window.addEventListener("resize", resize);
+    addEventListener("resize", () => { resize(); placePolaroids(); });
     resize();
 
-    function spawnConfettiBurst(count = 180) {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      for (let i = 0; i < count; i++) {
+    function spawnBurst(count=240){
+      const w = innerWidth, h = innerHeight;
+      for (let i=0;i<count;i++){
         confetti.push({
-          x: w * 0.5 + (Math.random() - 0.5) * 120,
-          y: h * 0.35 + (Math.random() - 0.5) * 60,
-          vx: (Math.random() - 0.5) * 10,
-          vy: Math.random() * -10 - 4,
-          g: 0.25 + Math.random() * 0.25,
-          s: 5 + Math.random() * 6,
-          r: Math.random() * Math.PI,
-          vr: (Math.random() - 0.5) * 0.25,
-          shape: Math.random() < 0.6 ? "rect" : "heart"
+          x: w*0.5 + (Math.random()-0.5)*140,
+          y: h*0.35 + (Math.random()-0.5)*60,
+          vx: (Math.random()-0.5)*10,
+          vy: Math.random()*-10 - 4,
+          g: 0.25 + Math.random()*0.25,
+          s: 5 + Math.random()*6,
+          r: Math.random()*Math.PI,
+          vr: (Math.random()-0.5)*0.25,
+          shape: Math.random()<0.6 ? "rect" : "heart"
         });
       }
     }
 
-    function drawHeart(x, y, size, rot) {
+    function drawHeart(x,y,size,rot){
       ctx.save();
-      ctx.translate(x, y);
+      ctx.translate(x,y);
       ctx.rotate(rot);
       ctx.beginPath();
-      const s = size / 18;
-      ctx.moveTo(0, 6*s);
-      ctx.bezierCurveTo(0, 0, -10*s, 0, -10*s, 6*s);
-      ctx.bezierCurveTo(-10*s, 12*s, 0, 15*s, 0, 18*s);
-      ctx.bezierCurveTo(0, 15*s, 10*s, 12*s, 10*s, 6*s);
-      ctx.bezierCurveTo(10*s, 0, 0, 0, 0, 6*s);
+      const s = size/18;
+      ctx.moveTo(0,6*s);
+      ctx.bezierCurveTo(0,0,-10*s,0,-10*s,6*s);
+      ctx.bezierCurveTo(-10*s,12*s,0,15*s,0,18*s);
+      ctx.bezierCurveTo(0,15*s,10*s,12*s,10*s,6*s);
+      ctx.bezierCurveTo(10*s,0,0,0,0,6*s);
       ctx.closePath();
       ctx.fill();
       ctx.restore();
     }
 
-    function step() {
-      if (!confettiRunning) return;
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    function tick(){
+      if (!running) return;
+      ctx.clearRect(0,0,innerWidth,innerHeight);
 
-      for (let i = confetti.length - 1; i >= 0; i--) {
+      for (let i=confetti.length-1;i>=0;i--){
         const p = confetti[i];
         p.vy += p.g;
         p.x += p.vx;
         p.y += p.vy;
         p.r += p.vr;
-
-        // color variety without hardcoding palette? (use HSL based on index randomness)
         const hue = (p.x + p.y) % 360;
         ctx.fillStyle = `hsla(${hue}, 85%, 60%, 0.9)`;
-
-        if (p.shape === "rect") {
-          ctx.save();
-          ctx.translate(p.x, p.y);
-          ctx.rotate(p.r);
-          ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s * 0.7);
+        if (p.shape==="rect"){
+          ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r);
+          ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.7);
           ctx.restore();
         } else {
-          drawHeart(p.x, p.y, p.s * 2.2, p.r);
+          drawHeart(p.x,p.y,p.s*2.2,p.r);
         }
-
-        if (p.y > window.innerHeight + 80 || p.x < -80 || p.x > window.innerWidth + 80) {
-          confetti.splice(i, 1);
-        }
+        if (p.y>innerHeight+80 || p.x<-80 || p.x>innerWidth+80) confetti.splice(i,1);
       }
-
-      // stop after it settles
-      if (confetti.length === 0) {
-        confettiRunning = false;
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+      if (confetti.length===0){
+        running=false;
+        ctx.clearRect(0,0,innerWidth,innerHeight);
         return;
       }
-      requestAnimationFrame(step);
+      requestAnimationFrame(tick);
     }
 
-    function startConfetti() {
-      spawnConfettiBurst(220);
-      // a couple extra bursts for drama
-      setTimeout(() => spawnConfettiBurst(140), 400);
-      setTimeout(() => spawnConfettiBurst(140), 900);
-      if (!confettiRunning) {
-        confettiRunning = true;
-        requestAnimationFrame(step);
-      }
+    function startConfetti(){
+      spawnBurst(260);
+      setTimeout(()=>spawnBurst(160), 450);
+      setTimeout(()=>spawnBurst(160), 950);
+      if (!running){ running=true; requestAnimationFrame(tick); }
     }
+
+    yesBtn.addEventListener("click", async () => {
+      overlay.style.display = "flex";
+      startConfetti();
+      noBtn.style.display = "none";
+      messageEl.textContent = "Correct answer ✅";
+
+      const music = document.getElementById("bgMusic");
+      if (music){
+        try { music.currentTime = 0; await music.play(); } catch(e) {}
+      }
+    });
+
+    // Hearts
+    const heartsContainer = document.getElementById("hearts");
+    const heartGlyphs = ["❤️","💗","💖","💘","💝","💞"];
+    function createHeart(){
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+      heart.style.left = Math.random()*100 + "vw";
+      heart.style.fontSize = (14 + Math.random()*26) + "px";
+      heart.style.animationDuration = (4 + Math.random()*4) + "s";
+      heartsContainer.appendChild(heart);
+      setTimeout(()=>heart.remove(), 8500);
+    }
+    setInterval(createHeart, 520);
+
+    // Initial
+    placePolaroids();
   </script>
 </body>
 </html>
